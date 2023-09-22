@@ -5,10 +5,12 @@ const fs = require('fs')
 
 app.use(express.json())
 
+
 //Mensagem do servidor online
 app.get('/', (req, res) => {
-    return res.status(200).send("Tudo bem?")
-})
+    return res.status(200).send( dadosPG() )
+})    
+  
 
 //Buscar todos clientes
 app.get('/cliente', (req, res) => {
@@ -73,3 +75,34 @@ app.put('/cliente/:id', (req, res) => {
 app.listen('3000', () => {
     console.log("API escuntando na poeta 3000")
 })
+
+function pegaLink() {
+    return "<a href='http://localhost:3000/cliente/3'>pegaLink!! todos os clientes</a>"  
+}
+
+function dadosPG() {
+    var pg = require('pg');
+    //or native libpq bindings
+    //var pg = require('pg').native
+    var dados = "nada pra começar"
+    var conString = "postgres://ddkpxdyr:lWuAUjv1fnAHTRq3wjrrUAGjjTkgVTcE@kesavan.db.elephantsql.com/ddkpxdyr" //Can be found in the Details page
+    var client = new pg.Client(conString);
+    client.connect(function(err) {
+        if(err) {
+            return console.error('could not connect to postgres', err);
+        }
+        client.query('SELECT * FROM "public"."produtos" LIMIT 100', function(err, result) {
+            if(err) {
+                return console.error('error running query', err);
+            }
+            console.log(result.rows[1]);
+            console.table(result.rows[1].produto)
+            dados = result.rows[1].produto;
+            client.end();
+
+        });
+    
+    });
+
+    return dados
+}
