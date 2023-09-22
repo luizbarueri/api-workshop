@@ -4,6 +4,7 @@ const db = require('./db.json')
 const fs = require('fs')
 
 app.use(express.json())
+require('dotenv').config();
 
 
 //Mensagem do servidor online
@@ -85,7 +86,8 @@ function dadosPG() {
     //or native libpq bindings
     //var pg = require('pg').native
     var dados = "nada pra começar"
-    var conString = "postgres://ddkpxdyr:lWuAUjv1fnAHTRq3wjrrUAGjjTkgVTcE@kesavan.db.elephantsql.com/ddkpxdyr" //Can be found in the Details page
+    var urlPG = process.env.DATABASE_URL;
+    var conString =  urlPG //Can be found in the Details page
     var client = new pg.Client(conString);
     client.connect(function(err) {
         if(err) {
